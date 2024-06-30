@@ -19,6 +19,7 @@ class CleanDatabaseSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
 
         // Bersihkan data dari tabel-tabel
+        DB::table('users')->truncate();
         DB::table('tasks')->truncate();
         DB::table('priorities')->truncate();
 

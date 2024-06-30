@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(CleanDatabaseSeeder::class);
-
+        $this->call(UsersTableSeeder::class);
         $this->call(PrioritiesTableSeeder::class);
         Task::factory(30)->create();
     }

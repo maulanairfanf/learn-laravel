@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -22,7 +23,9 @@ class TaskController extends Controller
         $perPage = $request->input('per_page', 10);
         $search = $request->input('search');
 
-        $tasksQuery = Task::query()->with('priority');
+        $user = $request->user();
+
+        $tasksQuery = Task::query()->with('priority')->where('user_id', $user->id);
 
         if (!empty($search)) {
             $tasksQuery->where('name', 'like', '%' . $search . '%');
@@ -56,8 +59,20 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $user = $request->user();
+
+        $validatedData = $request->validated();
+
+        if (!isset($validatedData['priority_id'])) {
+            $validatedData['priority_id'] = 3;
+        }
+
+        $validatedData['user_id'] = $user->id;
+
+        $task = Task::create($validatedData);
+
         $task->load('priority');
+
         return $this->formatApiResponse(TaskResource::make($task));
     }
 
@@ -66,11 +81,13 @@ class TaskController extends Controller
      */
     public function show(string $id)
     {
-        $task = Task::with('priority')->find($id);
+        $task = Task::where('id', $id)->where('user_id', request()->user()->id)->first();
 
         if (!$task) {
             return $this->formatApiResponse(null, 'Task not found', 404);
         }
+
+        $task->load('priority');
 
         return $this->formatApiResponse(TaskResource::make($task));
 
@@ -87,24 +104,48 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, string $id)
     {
+        $validatedData = $request->validated();
 
-        $task->update($request->validated());
-        return $this->formatApiResponse(TaskResource::make($task), 'Task updated successfully');
+        $task = Task::where('id', $id)->where('user_id', Auth::id())->first();
+
+        if (!$task) {
+            return $this->formatApiResponse(null, 'Task not found', 404);
+        }
+
+        if (isset($validatedData['name'])) {
+            $task->name = $validatedData['name'];
+        }
+
+        if (isset($validatedData['priority_id'])) {
+            $task->priority_id = $validatedData['priority_id'];
+        }
+
+        $task->save();
+        $task->load('priority');
+
+        return $this->formatApiResponse(new TaskResource($task), 'Task updated successfully');
 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(string $id)
     {
-        $task->delete();
+       // Cari task berdasarkan ID dan user_id pengguna yang terautentikasi
+       $task = Task::where('id', $id)->where('user_id', Auth::id())->first();
 
-       // Mengembalikan respons untuk sukses menghapus
-        return response()->json([
-            'message' => 'Task deleted successfully'
-        ], 204);
+       // Jika task tidak ditemukan
+       if (!$task) {
+           return $this->formatApiResponse(null, 'Task not found', 404);
+       }
+
+       // Hapus task
+       $task->delete();
+
+       // Mengembalikan respons bahwa task berhasil dihapus
+       return $this->formatApiResponse(null, 'Task deleted successfully');
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Priority;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,6 +23,7 @@ class TaskFactory extends Factory
             'name' => fake()->sentence(),
             'is_completed' => rand(0,1),
             'priority_id' => Priority::inRandomOrder()->first()->id,
+            'user_id'=> User::inRandomOrder()->first()->id,
             'created_at' => Carbon::now()->setTimezone('Asia/Jakarta'),
             'updated_at' => Carbon::now()->setTimezone('Asia/Jakarta'),
         ];
