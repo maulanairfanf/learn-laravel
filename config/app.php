@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'token_expiry_minutes' => env('TOKEN_EXPIRY_MINUTES', 60),
 ];
