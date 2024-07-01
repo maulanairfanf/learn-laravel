@@ -10,6 +10,7 @@ use App\Http\Resources\TaskResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -125,7 +126,7 @@ class TaskController extends Controller
         $task->save();
         $task->load('priority');
 
-        return $this->formatApiResponse(new TaskResource($task), 'Task updated successfully');
+        return $this->formatApiResponse(TaskResource::make($task), 'Task updated successfully');
 
     }
 
@@ -147,5 +148,27 @@ class TaskController extends Controller
 
        // Mengembalikan respons bahwa task berhasil dihapus
        return $this->formatApiResponse(null, 'Task deleted successfully');
+    }
+
+    public function getSuggestedTasks(Request $request)
+    {
+        $user_id = $request->user()->id;
+
+        // Query untuk mengambil task yang sering dibuat oleh pengguna
+        $suggestedTasks = Task::select('name')
+            ->selectRaw('COUNT(*) as count')
+            ->where('user_id', $user_id)
+            ->groupBy('name')
+            ->orderByDesc('count')
+            ->take(5) // Ambil 5 task teratas
+            ->get();
+
+        $formattedData = $suggestedTasks->map(function ($task) {
+            return ['name' => $task->name];
+        });
+
+
+        return $this->formatApiResponse($formattedData);
+
     }
 }

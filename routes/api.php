@@ -14,6 +14,8 @@ Route::prefix("v1")->group(function() {
 
     Route::middleware('auth:sanctum', CheckTokenExpiry::class)->group(function() {
         Route::apiResource('/tasks', TaskController::class);
+        Route::get('/tasks-suggestion', [TaskController::class, 'getSuggestedTasks']);
+
         Route::patch('/tasks/{id}/complete', CompletedTaskController::class);
         Route::apiResource('/priorities', PriorityController::class);
         Route::post('/logout', [AuthController::class, 'logout']);
