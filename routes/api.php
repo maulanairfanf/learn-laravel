@@ -13,9 +13,9 @@ Route::prefix("v1")->group(function() {
     Route::post("/register", [AuthController::class, "register"]);
     Route::post("/login", [AuthController::class, "login"]);
     Route::get("/data", [Simple::class, "index"]);
+    Route::apiResource('/tasks', TaskController::class);
 
     Route::middleware('auth:sanctum', CheckTokenExpiry::class)->group(function() {
-        Route::apiResource('/tasks', TaskController::class);
         Route::get('/tasks-suggestion', [TaskController::class, 'getSuggestedTasks']);
 
         Route::patch('/tasks/{id}/complete', CompletedTaskController::class);
