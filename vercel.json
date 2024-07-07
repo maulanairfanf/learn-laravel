@@ -14,6 +14,7 @@
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://laravel-tasks-maulana.vercel.app/",
+        "APP_KEY": "base64:inQZOAIzTPvXrzG5QG0dKUN86B9pjN7NhMVAo75+lbc=",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
