@@ -4,13 +4,15 @@ use App\Http\Controllers\Api\V1\CompletedTaskController;
 use App\Http\Controllers\Api\V1\PriorityController;
 use App\Http\Controllers\Api\V1\TaskController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\Simple;
 use App\Http\Middleware\CheckTokenExpiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("v1")->group(function() {
-    Route::post("/register", [AuthController::class, "register"])->name('register');
-    Route::post("/login", [AuthController::class, "login"])->name('login');
+    Route::post("/register", [AuthController::class, "register"]);
+    Route::post("/login", [AuthController::class, "login"]);
+    Route::get("/data", [Simple::class, "index"]);
 
     Route::middleware('auth:sanctum', CheckTokenExpiry::class)->group(function() {
         Route::apiResource('/tasks', TaskController::class);
