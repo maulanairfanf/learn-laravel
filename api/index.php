@@ -9,5 +9,5 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 // $response = $kernel->handle(
 //     $request = Illuminate\Http\Request::capture()
 // );
-// $response->send();
+$response->send();
 // $kernel->terminate($request, $response);
