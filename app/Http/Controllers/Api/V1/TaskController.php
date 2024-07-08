@@ -26,7 +26,7 @@ class TaskController extends Controller
 
         $user = $request->user();
 
-        $tasksQuery = Task::query()->with('priority');
+        $tasksQuery = Task::query()->with('priority')->where('user_id', $user->id);
 
         if (!empty($search)) {
             $tasksQuery->where('name', 'like', '%' . $search . '%');
