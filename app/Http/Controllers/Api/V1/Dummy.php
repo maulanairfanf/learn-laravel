@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
-class Simple extends Controller
+class Dummy extends Controller
 {
     public function index()
     {
         $fakeData = [
             'id' => 1,
-            'name' => 'TEst YOUTUVE',
-            'email' => 'emailfake@gmail.com'
+            'name' => 'Dummy',
+            'email' => 'dummy@gmail.com'
         ];
 
         return response()->json($fakeData);
