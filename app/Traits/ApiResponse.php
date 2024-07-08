@@ -14,13 +14,20 @@ trait ApiResponse
      * @param  int $status
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function formatApiResponse($data, $message = '', $status = 200): JsonResponse
+    protected function formatApiResponse($data, $message = '', $status = 200, $pagination = null): JsonResponse
     {
-        return response()->json([
+        $response = [
             'status' => $status === 200 ? 'success' : 'error',
             'message' => $message ?: $this->getDefaultMessage($status),
             'data' => $data,
-        ], $status);
+        ];
+
+        // Tambahkan informasi pagination jika $pagination tidak null
+        if ($pagination !== null) {
+            $response['pagination'] = $pagination;
+        }
+
+        return response()->json($response, $status);
     }
 
     /**
