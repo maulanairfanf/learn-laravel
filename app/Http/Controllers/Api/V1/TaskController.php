@@ -41,10 +41,12 @@ class TaskController extends Controller
             'last_page' => $tasks->lastPage(),
         ];
 
-        return $this->formatApiResponse([
-            'tasks' => TaskResource::collection($tasks),
-            'pagination' => $paginationInfo,
-        ]);
+        return $this->formatApiResponse(
+            TaskResource::collection($tasks),
+            '',
+            200,
+            $paginationInfo
+        );
     }
 
     /**
