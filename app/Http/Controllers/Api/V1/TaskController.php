@@ -23,13 +23,21 @@ class TaskController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $search = $request->input('search');
+        $isCompleted = $request->input('is_completed');
 
         $user = $request->user();
 
-        $tasksQuery = Task::query()->with('priority')->where('user_id', $user->id);
+        $tasksQuery = Task::query()
+        ->with('priority')
+        ->where('user_id', $user->id)
+        ->orderBy('created_at', 'desc');
 
         if (!empty($search)) {
             $tasksQuery->where('name', 'like', '%' . $search . '%');
+        }
+
+        if (!is_null($isCompleted)) {
+            $tasksQuery->where('is_completed', $isCompleted);
         }
 
         $tasks = $tasksQuery->paginate($perPage);
